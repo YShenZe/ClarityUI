@@ -1,6 +1,6 @@
 {
   "name": "ClarityUI",
-  "version": "1.0.3",
+  "version": "1.0.0",
   "description": "ClarityUI —— 一个以可读性优先、内容密集为主的轻量级CSS框架。",
   "main": "index.js",
   "author": "YShenZe",
