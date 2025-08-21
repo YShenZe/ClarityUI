@@ -1,42 +1,4 @@
-name: NodeJS with Webpack
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: write   # 允许 push tag / 创建 Release
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-
-    steps:
-    - name: Checkout source
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        # 让后面 push 有完整历史
-        fetch-depth: 0
-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Install & Build
-      run: |
-        yarn install
-        yarn build
-
-    # ---------- 仅在 push 到 main 时执行 ----------
-        - name: Bump version and push tag
+    - name: Bump version and push tag
       if: github.event_name == 'push'
       run: |
         git config user.name  "github-actions[bot]"
@@ -62,15 +24,3 @@ jobs:
 
         # 3. 推送 commit 与 tag
         git push origin main --follow-tags
-
-
-    - name: Publish Release
-      if: github.event_name == 'push'
-      uses: marvinpinto/action-automatic-releases@latest
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "$(node -p 'require(\"./package.json\").version')"
-        prerelease: false
-        title: "Release $(node -p 'require(\"./package.json\").version')"
-        files: |
-          dist/**/*
