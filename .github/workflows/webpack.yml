@@ -36,21 +36,33 @@ jobs:
         yarn build
 
     # ---------- 仅在 push 到 main 时执行 ----------
-    - name: Bump version and push tag
+        - name: Bump version and push tag
       if: github.event_name == 'push'
       run: |
-        # 配置提交者身份
         git config user.name  "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
-        # 拉取远程最新变更（rebase 方式），防止推送冲突
+        # 1. 拉取远程最新代码和 tag，确保本地 tag 同步
+        git fetch --tags origin main
         git pull --rebase --autostash origin main
 
-        # 生成新的 patch 版本号并打 tag（如 v1.0.2）
-        VERSION=$(npm version patch)
+        # 2. 计算下一个版本号（避免重复）
+        #    如果 package.json 与最新 tag 一致，则再 patch 一次
+        LATEST_TAG=$(git describe --tags --abbrev=0 || echo v0.0.0)
+        PKG_VERSION="v$(node -p 'require("./package.json").version')"
 
-        # 推送 commit 与 tag
+        if [[ "$LATEST_TAG" == "$PKG_VERSION" ]]; then
+          # tag 已存在，需要再升级一次
+          NEXT_VERSION=$(npm version patch)
+        else
+          # tag 不存在，直接使用 package.json 的版本
+          NEXT_VERSION=$PKG_VERSION
+          git tag -a "$NEXT_VERSION" -m "$NEXT_VERSION"
+        fi
+
+        # 3. 推送 commit 与 tag
         git push origin main --follow-tags
+
 
     - name: Publish Release
       if: github.event_name == 'push'
