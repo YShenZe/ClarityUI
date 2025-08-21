@@ -4,7 +4,17 @@ ClarityUI —— 以可读性优先、内容密集为主的轻量级CSS框架
 
 ## 调用方法
 
-可使用本仓库内的**/dist/clarityui.min.css**文件
+克隆本仓库至本地，使用yarn安装依赖：
+```sh
+yarn install
+```
+
+然后使用webpack进行构建
+```sh
+yarn build
+```
+
+直接再引入构建好的`clarityui.min.css`就行了
 
 ## 支持的组件
 
