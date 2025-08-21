@@ -1,26 +1,73 @@
+name: NodeJS with Webpack
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write   # 允许 push tag / 创建 Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0          # 拉取完整历史与标签
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install & Build
+      run: |
+        yarn install
+        yarn build
+
+    # ---------- 仅在 push 到 main 时执行 ----------
     - name: Bump version and push tag
       if: github.event_name == 'push'
       run: |
         git config user.name  "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
-        # 1. 拉取远程最新代码和 tag，确保本地 tag 同步
+        # 1. 同步远程最新代码和标签
         git fetch --tags origin main
         git pull --rebase --autostash origin main
 
-        # 2. 计算下一个版本号（避免重复）
-        #    如果 package.json 与最新 tag 一致，则再 patch 一次
-        LATEST_TAG=$(git describe --tags --abbrev=0 || echo v0.0.0)
+        # 2. 计算下一个版本号
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo v0.0.0)
         PKG_VERSION="v$(node -p 'require("./package.json").version')"
 
         if [[ "$LATEST_TAG" == "$PKG_VERSION" ]]; then
-          # tag 已存在，需要再升级一次
+          # tag 已存在 → 自动再 patch 一次
           NEXT_VERSION=$(npm version patch)
         else
-          # tag 不存在，直接使用 package.json 的版本
+          # tag 不存在 → 直接使用 package.json 的版本并手动打 tag
           NEXT_VERSION=$PKG_VERSION
           git tag -a "$NEXT_VERSION" -m "$NEXT_VERSION"
         fi
 
         # 3. 推送 commit 与 tag
         git push origin main --follow-tags
+
+    - name: Publish Release
+      if: github.event_name == 'push'
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "$(node -p 'require(\"./package.json\").version')"
+        prerelease: false
+        title: "Release $(node -p 'require(\"./package.json\").version')"
+        files: |
+          dist/**/*
