@@ -1,0 +1,377 @@
+// ClarityUI 2025/08/21 梦泽
+
+:root
+  --bg #fafafa
+  --bg-card #ffffff
+  --bg-dark #121212
+  --bg-muted #f1f3f5
+  --text #212529
+  --text-muted #6c757d
+  --text-light #f8f9fa
+  --text-dark #000000
+  --border #a4a9ae
+  --shadow rgba(0,0,0,.08)
+  --shadow-strong rgba(0,0,0,.15)
+  --primary #0059c1
+  --primary-hover #004199
+  --secondary #6c757d
+  --secondary-hover #565e64
+  --accent #f59f00
+  --success #198754
+  --info #0dcaf0
+  --warning #ffc107
+  --danger #dc3545
+  --radius .375rem
+  --radius-lg .5rem
+  --radius-sm .25rem
+  --unit 1rem
+  --container-max 1200px
+  --gap 1rem
+  --speed .2s
+  --speed-slow .35s
+  --enable-anim 1
+  --font -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif
+
+*
+  box-sizing border-box
+  margin 0
+  padding 0
+
+body
+  font-family var(--font)
+  font-size var(--unit)
+  line-height 1.55
+  color var(--text)
+  background var(--bg)
+  padding var(--unit)
+  max-width var(--container-max)
+  margin auto
+
+h1, h2, h3, h4, h5, h6
+  margin 0 0 calc(var(--unit) * .5)
+  line-height 1.25
+  font-weight 600
+for i in 1..6
+  h{i}
+    font-size unquote("calc(var(--unit) * (2.5 - %s * 0.25))" % (i - 1))
+
+p
+  margin 0 0 var(--unit)
+
+a
+  color var(--primary)
+  transition color var(--speed)
+  &:hover
+    color var(--primary-hover)
+    text-decoration underline
+
+.button
+  display inline-block
+  padding calc(var(--unit) * .5) var(--unit)
+  font-size .95rem
+  font-weight 500
+  color #fff
+  background var(--primary)
+  border 1px solid var(--primary)
+  border-radius var(--radius)
+  cursor pointer
+  transition all var(--speed)
+  &:hover
+    background var(--primary-hover)
+    if var(--enable-anim) == 1
+      transform translateY(-1px)
+  &.secondary
+    background var(--secondary)
+    border-color var(--secondary)
+    &:hover
+      background var(--secondary-hover)
+  &.outline
+    background transparent
+    color var(--primary)
+    border-color var(--primary)
+    &:hover
+      background var(--primary)
+      color #fff
+  &:disabled
+    opacity .5
+    cursor not-allowed
+    transform none
+
+.form-group
+  margin-bottom var(--unit)
+
+label
+  display block
+  margin-bottom calc(var(--unit) * .25)
+  font-weight 500
+  font-size .9rem
+
+input, textarea, select
+  width 100%
+  padding calc(var(--unit) * .5)
+  font-size .9rem
+  border 1px solid var(--border)
+  border-radius var(--radius)
+  background var(--bg-card)
+  transition border-color var(--speed)
+  &:focus
+    border-color var(--primary)
+    outline none
+  &:disabled
+    background var(--bg-muted)
+    cursor not-allowed
+    opacity .6
+
+textarea
+  resize vertical
+  min-height calc(var(--unit) * 4)
+
+.card
+  background var(--bg-card)
+  border 1px solid var(--border)
+  border-radius var(--radius)
+  padding var(--unit)
+  margin-bottom var(--unit)
+  box-shadow 0 1px 2px var(--shadow)
+  transition box-shadow var(--speed), transform var(--speed)
+  &.hoverable:hover
+    if var(--enable-anim) == 1
+      transform translateY(-2px)
+    box-shadow 0 4px 8px var(--shadow-strong)
+
+.card-header
+  font-weight 600
+  margin-bottom calc(var(--unit) * .5)
+
+.nav
+  display flex
+  list-style none
+  margin-bottom var(--unit)
+  gap var(--unit)
+
+.nav-link
+  padding calc(var(--unit) * .5)
+  color var(--primary)
+  border-radius var(--radius)
+  transition background var(--speed)
+  &:hover
+    background rgba(0,89,193,.08)
+  &.active
+    background var(--primary)
+    color #fff
+
+.table
+  width 100%
+  border-collapse collapse
+  margin-bottom var(--unit)
+  th, td
+    padding calc(var(--unit) * .5)
+    text-align left
+    border-bottom 1px solid var(--border)
+  th
+    font-weight 600
+    background var(--bg)
+  tr:hover
+    background rgba(0,0,0,.03)
+
+.modal
+  position fixed
+  inset 0
+  background rgba(0,0,0,.45)
+  display flex
+  align-items center
+  justify-content center
+  z-index 1000
+  &-content
+    background var(--bg-card)
+    border 1px solid var(--border)
+    border-radius var(--radius)
+    padding var(--unit)
+    max-width 90vw
+    max-height 90vh
+    overflow auto
+    box-shadow 0 4px 12px var(--shadow-strong)
+  &-close
+    float right
+    cursor pointer
+    font-size 1.5rem
+
+.alert
+  padding var(--unit)
+  margin-bottom var(--unit)
+  border 1px solid var(--border)
+  border-radius var(--radius)
+  position relative
+  &-success
+    background #e9f7ec
+    color #0a4f1c
+  &-info
+    background #e6f7fb
+    color #0c5460
+  &-warning
+    background #fff7e6
+    color #856404
+  &-danger
+    background #fcebed
+    color #721c24
+  &-close
+    position absolute
+    top .5rem
+    right 1rem
+    cursor pointer
+
+.badge
+  display inline-block
+  padding .25em .5em
+  font-size .75rem
+  font-weight 600
+  border-radius var(--radius-sm)
+  background var(--secondary)
+  color #fff
+  &.primary
+    background var(--primary)
+  &.success
+    background var(--success)
+  &.warning
+    background var(--warning)
+    color #212529
+  &.danger
+    background var(--danger)
+
+.progress
+  width 100%
+  height .75rem
+  background var(--bg-muted)
+  border-radius var(--radius)
+  overflow hidden
+  .bar
+    height 100%
+    background var(--primary)
+    transition width var(--speed)
+
+.avatar
+  display inline-block
+  width 2.5rem
+  height 2.5rem
+  border-radius 50%
+  overflow hidden
+  background var(--bg-muted)
+  img
+    width 100%
+    height 100%
+    object-fit cover
+
+.tabs
+  display flex
+  border-bottom 1px solid var(--border)
+  margin-bottom var(--unit)
+  .tab
+    padding .5rem 1rem
+    cursor pointer
+    transition color var(--speed), border-color var(--speed)
+    border-bottom 2px solid transparent
+    &:hover
+      color var(--primary)
+    &.active
+      color var(--primary)
+      border-color var(--primary)
+
+.spinner
+  width 1.5rem
+  height 1.5rem
+  border .2em solid var(--border)
+  border-top-color var(--primary)
+  border-radius 50%
+  animation spin 1s linear infinite
+  if var(--enable-anim) == 0
+    animation none
+
+@keyframes spin
+  to
+    transform rotate(360deg)
+
+.list
+  list-style none
+  padding 0
+  margin 0 0 var(--unit)
+  border 1px solid var(--border)
+  border-radius var(--radius)
+  overflow hidden
+  .item
+    padding .75rem 1rem
+    border-bottom 1px solid var(--border)
+    &:last-child
+      border-bottom none
+    &:hover
+      background var(--bg-muted)
+
+.breadcrumb
+  display flex
+  list-style none
+  gap .5rem
+  margin-bottom var(--unit)
+  font-size .9rem
+  li
+    &:after
+      content "/"
+      margin 0 .5rem
+      color var(--text-muted)
+    &:last-child:after
+      content none
+  a
+    color var(--primary)
+    &:hover
+      text-decoration underline
+
+.collapse
+  border 1px solid var(--border)
+  border-radius var(--radius)
+  overflow hidden
+  .header
+    padding .75rem 1rem
+    cursor pointer
+    font-weight 500
+    background var(--bg-muted)
+  .body
+    padding .75rem 1rem
+    display none
+  &.open .body
+    display block
+
+for i in 1..6
+  .mt-{i}
+    margin-top unquote("calc(var(--unit) * %s)" % i)
+  .mb-{i}
+    margin-bottom unquote("calc(var(--unit) * %s)" % i)
+  .p-{i}
+    padding unquote("calc(var(--unit) * %s)" % i)
+
+body.dark
+  --bg #121212
+  --bg-card #1e1e1e
+  --bg-muted #2a2a2a
+  --text #e9ecef
+  --text-muted #adb5bd
+  --text-light #f8f9fa
+  --text-dark #ffffff
+  --border #3a3f44
+  --shadow rgba(0,0,0,.4)
+  --shadow-strong rgba(0,0,0,.6)
+  --primary #3399ff
+  --primary-hover #1d7be0
+  --secondary #868e96
+  --secondary-hover #6c757d
+  --accent #ffd43b
+  --success #51cf66
+  --info #4dabf7
+  --warning #fcc419
+  --danger #ff6b6b
+  color var(--text)
+  background var(--bg)
+
+@media (max-width 768px)
+  body
+    font-size .875rem
+  .nav
+    flex-direction column
+    gap calc(var(--unit) * .5)

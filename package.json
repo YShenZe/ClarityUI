@@ -1,0 +1,21 @@
+{
+  "name": "ClarityUI",
+  "version": "1.0.0",
+  "description": "ClarityUI —— 一个以可读性优先、内容密集为主的轻量级CSS框架。",
+  "main": "index.js",
+  "author": "YShenZe",
+  "license": "MIT",
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.2",
+    "mini-css-extract-plugin": "^2.9.4",
+    "style-loader": "^4.0.0",
+    "stylus": "^0.64.0",
+    "stylus-loader": "^8.1.2",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  },
+  "scripts": {
+    "build": "webpack --mode production"
+  }
+}
