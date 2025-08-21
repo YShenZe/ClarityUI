@@ -26,15 +26,3 @@ jobs:
       run: |
         yarn install
         yarn build
-
-    - name: Push to dist branch
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # 仅在 main 分支推送时执行
-      run: |
-        git config --global user.name 'GitHub Action'
-        git config --global user.email 'action@github.com'
-        git checkout -b dist
-        git add dist -f
-        git commit -m "Deploy to dist branch"
-        git push origin dist --force
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
