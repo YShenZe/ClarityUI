@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: write   # 允许 push tag
+  contents: write   # 允许 push tag / 创建 Release
 
 jobs:
   build:
@@ -18,32 +18,43 @@ jobs:
         node-version: [18.x, 20.x, 22.x]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        # 让后面 push 有完整历史
+        fetch-depth: 0
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Build
+    - name: Install & Build
       run: |
         yarn install
         yarn build
 
-    # 只在 push 到 main 时执行发布
+    # ---------- 仅在 push 到 main 时执行 ----------
     - name: Bump version and push tag
       if: github.event_name == 'push'
       run: |
+        # 配置提交者身份
         git config user.name  "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        npm version patch                # 生成 v1.0.1, v1.0.2 ...
+
+        # 拉取远程最新变更（rebase 方式），防止推送冲突
+        git pull --rebase --autostash origin main
+
+        # 生成新的 patch 版本号并打 tag（如 v1.0.2）
+        VERSION=$(npm version patch)
+
+        # 推送 commit 与 tag
         git push origin main --follow-tags
 
     - name: Publish Release
       if: github.event_name == 'push'
-      uses: "marvinpinto/action-automatic-releases@latest"
+      uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "$(node -p 'require(\"./package.json\").version')"
